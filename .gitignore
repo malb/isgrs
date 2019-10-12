@@ -1,1 +1,4 @@
 /isgrs.db
+/config.py
+__pycache__
+/.local
