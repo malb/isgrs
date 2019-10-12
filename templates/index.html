@@ -13,8 +13,8 @@
     {% for event in events %}
     {% if event.status == "PUBLIC" %}
     <li class="seminar-list">
-      <span class="seminar-datetime">{{event.datetime_str}}</span>
-      <span class="seminar-title">{{event.title}}</span>
+      <a href="{{url_for('.day', date=event.datetime.strftime('%Y-%m-%d'))}}"><span class="seminar-datetime">{{event.datetime_str}}</span></a>
+      <a href="{{url_for('.day', date=event.datetime.strftime('%Y-%m-%d'))}}"><span class="seminar-title">{{event.title}}</span></a>
       by
       {% if event.speaker_link %}<a href="{{event.speaker_link}}">{% endif %}
       <span class="seminar-speaker">{{event.speaker_firstname}} {{event.speaker_lastname}}</span>
@@ -33,15 +33,16 @@
 {{event.abstract}}
         {% endfilter %}
       </div>
-      <span class="seminar-field">Speaker bio:</span>
+      <span class="seminar-field" data-toggle="collapse" href="#collapse-{{event.id}}">Speaker Bio ⮷</span>
+      <div {%if single %} class="collapse in" {% else %} class="collapse" {% endif %} id="collapse-{{event.id}}">
       <div class="seminar-markdown">
         {% filter markdown %}
 {{event.speaker_bio}}
         {% endfilter %}
       </div>
+      </div>
       <div>
         <span class="seminar-field">Venue:</span> <span class="seminar-venue">{{event.venue}}</span>
-        <span class="seminar-link"><a href="{{url_for('.day', date=event.datetime.strftime('%Y-%m-%d'))}}">Link</a></span>
       </div>
     </li>
     {% elif event.status == "PLACEHOLDER" %}
