@@ -1,0 +1,17 @@
+alembic
+Flask
+Flask-Mail
+Flask-Migrate
+Flask-SQLAlchemy
+Flask-WTF
+Flask-Bootstrap
+Flask-Security
+Flask-Markdown
+SQLAlchemy
+Werkzeug
+pytest-flask-sqlalchemy
+python-dotenv
+click
+click-log
+bcrypt
+icalendar

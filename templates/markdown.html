@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}ISG Research Seminar Schedule{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>{{title}}</h1>
+  </div>
+  <div class="markdown">
+    {% filter markdown %}
+{{markdown}}
+    {% endfilter %}
+  </div>
+</div>
+{% endblock %}
+{% block footer %}
+<footer class="page-footer font-small">
+  <div class="container-fluid text-center text-md-left">
+   <a href="?raw=true">markdown sources</a> of this file
+  </div>
+</footer>
+{% endblock footer %}

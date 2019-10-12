@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}ISG Research Seminar Schedule{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    {% if single %}
+    <h1>{{events[0].datetime.strftime("%a, %d %b %Y")}}</h1>
+    {% else %}
+    <h1>Schedule</h1>
+    {% endif %}
+  </div>
+  <ul>
+    {% for event in events %}
+    {% if event.status == "PUBLIC" %}
+    <li class="seminar-list">
+      <span class="seminar-datetime">{{event.datetime_str}}</span>
+      <span class="seminar-title">{{event.title}}</span>
+      by
+      {% if event.speaker_link %}<a href="{{event.speaker_link}}">{% endif %}
+      <span class="seminar-speaker">{{event.speaker_firstname}} {{event.speaker_lastname}}</span>
+      {% if event.speaker_link %}</a>{% endif %}
+      {% if event.speaker_affiliation %}({{event.speaker_affiliation}}){% endif %}
+      <br />
+      {% if event.public_notes %}
+      <div class="seminar-markdown">
+        {% filter markdown %}
+{{event.public_notes}}
+        {% endfilter %}
+      </div>
+      {% endif %}
+      <div class="seminar-markdown">
+        {% filter markdown %}
+{{event.abstract}}
+        {% endfilter %}
+      </div>
+      <span class="seminar-field">Speaker bio:</span>
+      <div class="seminar-markdown">
+        {% filter markdown %}
+{{event.speaker_bio}}
+        {% endfilter %}
+      </div>
+      <div>
+        <span class="seminar-field">Venue:</span> <span class="seminar-venue">{{event.venue}}</span>
+        <span class="seminar-link"><a href="{{url_for('.day', date=event.datetime.strftime('%Y-%m-%d'))}}">Link</a></span>
+      </div>
+    </li>
+    {% elif event.status == "PLACEHOLDER" %}
+    <li class="seminar-list">
+      <span class="seminar-datetime">{{event.datetime_str}}</span>
+      <span class="seminar-title">TBC</span>
+      by <span class="seminar-speaker">TBC</span>
+    </li>
+    {% elif event.status == "FREE" and free == "shown" and event.in_future %}
+    <li class="seminar-list">
+      <span class="seminar-datetime">{{event.datetime_str}}</span>
+      <span class="seminar-title">Free Slot</span>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

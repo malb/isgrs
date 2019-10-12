@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Seminar Details {% endblock %}
+{% block navbar %}
+<div class="navbar navbar-fixed-top">
+  <!-- ... -->
+</div>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>Request Speaker Input</h1>
+  </div>
+  <form method="POST" action="{{url_for('.request_speaker_edit', eventid=event.id)}}">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens="only") }}
+    <div class="form-group row">     
+      <label class="col-md-1 col-form-label">To:</label>
+      <div class="col-md-8">
+        <input class="form-control" type="text" value="{{event.speaker_firstname}} {{event.speaker_lastname}} &lt;{{event.speaker_email}}&gt;" readonly>
+      </div>
+    </div>
+    <div class="form-group row">
+      {{form.cc.label(class="col-md-1 col-form-label")}}
+      <div class="col-md-8">
+        {{form.cc(class="form-control", readonly=True)}}        
+      </div>
+    </div>
+    <div class="form-group row">
+      {{form.subject.label(class="col-md-1 col-form-label")}}
+      <div class="col-md-8">
+        {{form.subject(class="form-control")}}        
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-9">
+        {{ form.message(rows=16, class="form-control") }}
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-2">
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+import os
+import logging  # noqa
+
+import sys
+if sys.version_info < (3, 7):
+    from backports.datetime_fromisoformat import MonkeyPatch
+    MonkeyPatch.patch_fromisoformat()
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+
+class Config(object):
+    # URL of the webapp
+    FRONTEND_DOMAIN =  # FIXME
+
+    # used the generate tokens
+    SECRET_KEY = os.environ.get("SECRET_KEY")  # FIXME
+
+    # used for generating passwords
+    SECURITY_PASSWORD_SALT =  # FIXME
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "DATABASE_URL"
+    ) or "sqlite:///" + os.path.join(basedir, "isgrs.db")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    TEMPLATE_DIR = os.path.join(basedir, "templates")
+    STATIC_DIR = os.path.join(basedir, "static")
+
+    TESTING = False
+
+    # We'll run in debug mode on the developer's machine
+    if basedir == :  # FIXME
+        FRONTEND_DOMAIN = "http://localhost:5000"
+        TESTING = True
+
+    @classmethod
+    def load_template(cls, name, category="app"):
+        with open(os.path.join(cls.TEMPLATE_DIR, category, name + ".tmpl")) as fh:
+            return fh.read()
+
+    # Mailinglists to announce public events
+    ANNOUNCE_PUBLIC = [
+
+    ]
+
+    # Mailinglists to announce internal events
+    ANNOUNCE_INTERNAL = [
+    ]
+
+
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = "sqlite://"

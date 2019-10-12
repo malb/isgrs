@@ -1,0 +1,73 @@
+.seminar-field {
+    font-weight: bold;
+      color: #777;
+}
+
+.seminar-title {
+    font-weight: bold;
+    color: #7B6000;
+}
+
+.seminar-speaker {
+}
+
+.seminar-link {
+    float: right;
+}
+
+.seminar-list {
+    padding-top:     20px;
+    padding-bottom:  10px;
+    padding-right:    5px;
+    padding-left:     5px;
+}
+
+.seminar-list-admin {
+    padding-top:     5px;
+    padding-bottom:  5px;
+    padding-right:   5px;
+    padding-left:    5px;
+}
+
+.seminar-list-admin:hover {
+    background-color: #fdf6e3;
+}
+
+.seminar-datetime {
+    color: #777;
+    float: right;
+    text-align: right;
+    width: 12em;
+}
+
+.seminar-status {
+    color: #777;
+    width: 6em;
+    font-weight: bold;
+}
+
+div .seminar-markdown {
+    background-color: #efefef;
+    margin: 5px;
+    padding: 5px;
+}
+
+div .seminar-markdown h1,
+div .seminar-markdown h2,
+div .seminar-markdown h3,
+div .seminar-markdown h4,
+div .seminar-markdown h5,
+div .seminar-markdown h6 {
+    font-size: 100%;
+    font-weight: bold;
+}
+
+div .seminar-markdown h1:before { content: "# "; }
+div .seminar-markdown h1:after  { content: " #"; }
+
+div .seminar-markdown h2:before { content: "## "; }
+div .seminar-markdown h2:after  { content: " ##"; }
+
+div .seminar-markdown h3:before { content: "### "; }
+div .seminar-markdown h3:after  { content: " ###"; }
+

@@ -1,0 +1,133 @@
+{% extends "base-admin.html" %}
+{% block title %}ISG Research Seminars Admin Interface{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>ISG Reseach Seminar Admin Panel</h1>
+  </div>
+  <h3>Upcoming Seminars</h3>
+  <ul>
+    {% for event in events %}
+    {% if event.status != "FREE" %}
+    <li class="seminar-list-admin">
+      <span class="seminar-datetime" onclick="location='/admin/edit/{{event.id}}'">
+        {{event.datetime_str}}
+      </span>
+      <span class="seminar-status" onclick="location='/admin/edit/{{event.id}}'">
+        {{event.status}}
+      </span>
+      <span class="seminar-title"  onclick="location='/admin/edit/{{event.id}}'">
+        {{event.title}}
+      </span> by
+      <span class="seminar-speaker">
+        <a href="mailto:{{event.speaker_email}}">
+          {{event.speaker_firstname}} {{event.speaker_lastname}}
+        </a>
+      </span><br />
+      <div class="seminar-markdown"  onclick="location='/admin/edit/{{event.id}}'">
+        {% filter markdown %}
+{{event.abstract}}
+        {% endfilter %}
+      </div>
+      <div class="seminar-markdown"  onclick="location='/admin/edit/{{event.id}}'">
+        {% filter markdown %}
+{{event.speaker_bio}}
+        {% endfilter %}
+      </div>
+      {% if event.public_notes %}
+      <b>Public Notes:</b>
+      <div class="seminar-markdown"  onclick="location='/admin/edit/{{event.id}}'">
+        {% filter markdown %}
+{{event.public_notes}}
+        {% endfilter %}
+      </div>
+      {% endif %}
+      {% if event.private_notes %}
+      <b>Private Notes:</b>
+      <div class="seminar-markdown"  onclick="location='/admin/edit/{{event.id}}'">
+        {% filter markdown %}
+{{event.private_notes}}
+        {% endfilter %}
+      </div>
+      {% endif %}
+      <b>Venue:</b> {{event.venue}},
+      <b>Minder:</b> <a href="mailto:{{event.minder_email}}">
+        {{event.minder_firstname}} {{event.minder_lastname}}</a></br>
+      <b>Actions:</b>
+      <a href="{{url_for('.edit', eventid=event.id)}}">Edit</a> |
+      <a href="{{url_for('.speaker_edit', token=event.token, eventid=event.id)}}">Form for Speaker</a>
+      (<a href="{{url_for('.request_speaker_edit', eventid=event.id)}}">Request</a>) |
+      <a href="{{url_for('.announce', token=current_user.announce_token, eventid=event.id)}}">Announce</a>
+    </li>
+    {% else %}
+    <li class="seminar-list-admin" onclick="location='/admin/edit/{{event.id}}'">
+      <span class="seminar-datetime">{{event.datetime_str}}</span>
+    <a href="{{url_for('.edit', eventid=event.id)}}"><span class="seminar-status">FREE</span></a>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+  <h3>Past Seminars</h3>
+  <ul>
+    {% for event in past_events %}
+    {% if event.status != "FREE" %}
+    <li class="seminar-list-admin">
+      <span class="seminar-datetime" onclick="location='/admin/edit/{{event.id}}'">
+        {{event.datetime_str}}
+      </span>
+      <span class="seminar-status" onclick="location='/admin/edit/{{event.id}}'">
+        {{event.status}}
+      </span>
+      <span class="seminar-title"  onclick="location='/admin/edit/{{event.id}}'">
+        {{event.title}}
+      </span> by
+      <span class="seminar-speaker">
+        <a href="mailto:{{event.speaker_email}}">
+          {{event.speaker_firstname}} {{event.speaker_lastname}}
+        </a>
+      </span><br />
+      <div class="seminar-markdown"  onclick="location='/admin/edit/{{event.id}}'">
+        {% filter markdown %}
+{{event.abstract}}
+        {% endfilter %}
+      </div>
+      <div class="seminar-markdown"  onclick="location='/admin/edit/{{event.id}}'">
+        {% filter markdown %}
+{{event.speaker_bio}}
+        {% endfilter %}
+      </div>
+      {% if event.public_notes %}
+      <b>Public Notes:</b>
+      <div class="seminar-markdown"  onclick="location='/admin/edit/{{event.id}}'">
+        {% filter markdown %}
+{{event.public_notes}}
+        {% endfilter %}
+      </div>
+      {% endif %}
+      {% if event.private_notes %}
+      <b>Private Notes:</b>
+      <div class="seminar-markdown"  onclick="location='/admin/edit/{{event.id}}'">
+        {% filter markdown %}
+{{event.private_notes}}
+        {% endfilter %}
+      </div>
+      {% endif %}
+      <b>Venue:</b> {{event.venue}},
+      <b>Minder:</b> <a href="mailto:{{event.minder_email}}">
+        {{event.minder_firstname}} {{event.minder_lastname}}</a></br>
+      <b>Actions:</b>
+      <a href="{{url_for('.edit', eventid=event.id)}}">Edit</a> |
+      <a href="{{url_for('.speaker_edit', token=event.token, eventid=event.id)}}">Form for Speaker</a>
+      (<a href="{{url_for('.request_speaker_edit', eventid=event.id)}}">Request</a>) |
+      <a href="{{url_for('.announce', token=current_user.announce_token, eventid=event.id)}}">Announce</a>
+    </li>
+    {% else %}
+    <li class="seminar-list-admin" onclick="location='/admin/edit/{{event.id}}'">
+      <span class="seminar-datetime">{{event.datetime_str}}</span>
+    <a href="{{url_for('.edit', eventid=event.id)}}"><span class="seminar-status">FREE</span></a>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

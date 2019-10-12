@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Seminar Details {% endblock %}
+{% block navbar %}
+<div class="navbar navbar-fixed-top">
+  <!-- ... -->
+</div>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>ISG Seminar Details</h1>
+  </div>
+  {% if event.datetime %}
+  <p>Edit details for seminar on {{event.datetime.strftime("%a, %d %b %Y %H:%M")}}.</p>
+  {% else %}
+  <p>Add details for seminar.</p>
+  {% endif %}
+  <form method="POST" action="{{url_for('.edit', eventid=event.id)}}">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens="only") }}
+    <h2>Seminar</h2>
+    <div class="form-group">
+      <div class="row">
+        <div class="col-md-6">{{ form.date.label }} {{ form.date(class="form-control") }}</div>
+        <div class="col-md-6">{{ form.time.label }} {{ form.time(class="form-control") }}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">{{ form.venue.label }} {{ form.venue(class="form-control") }} </div>
+        <div class="col-md-6">{{ form.status.label }} {{ form.status(class="form-control") }} </div>        
+      </div>
+    </div>
+    <div class="form-group">
+    {{ form.title.label }} {{ form.title(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.abstract.label }} {{ form.abstract(rows=16, class="form-control") }}
+      <small class="form-text text-muted">Markdown and LaTeX syntax supported.</small>
+    </div>
+    <div class="form-group">
+      {{ form.public_notes.label }} {{ form.public_notes(class="form-control", rows=4) }}
+      <small class="form-text text-muted">Markdown and LaTeX syntax supported.</small>
+    </div>
+    <div class="form-group">
+      {{ form.private_notes.label }} {{ form.private_notes(class="form-control", rows=4, style="border: 2px solid red;") }}
+      <small class="form-text text-muted">Markdown and LaTeX syntax supported. These notes will not be published or shared with anyone.</small>
+    </div>
+    <div class="form-group">
+      <h2>Speaker</h2>
+      <div class="row">        
+        <div class="col-md-6">
+          {{ form.speaker_firstname.label }}
+          {{ form.speaker_firstname(class="form-control") }}
+        </div>
+        <div class="col-md-6">
+          {{ form.speaker_lastname.label }}
+          {{ form.speaker_lastname(class="form-control") }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          {{ form.speaker_affiliation.label }}
+          {{ form.speaker_affiliation(class="form-control") }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          {{ form.speaker_email.label }}
+          {{ form.speaker_email(class="form-control") }}
+        </div>
+        <div class="col-md-6">
+          {{ form.speaker_link.label }}
+          {{ form.speaker_link(class="form-control") }}
+        </div>
+      </div>      
+      <div class="form-group">
+        {{ form.speaker_bio.label }} {{ form.speaker_bio(rows=8, class="form-control") }}
+        <small class="form-text text-muted">Markdown and LaTeX syntax supported.</small>
+      </div>
+    </div>
+    <div class="form-group">
+      <h2>Minder</h2>
+      <div class="row">
+        <div class="col-md-6">
+          {{ form.minder_firstname.label }} {{ form.minder_firstname(class="form-control") }}
+        </div>
+        <div class="col-md-6">
+          {{ form.minder_lastname.label }} {{ form.minder_lastname(class="form-control") }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          {{ form.minder_email.label }} {{ form.minder_email(class="form-control") }}
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      {{ form.submit(class="btn btn-primary") }}
+    </div>
+  </form>
+  <hr>
+  <h2>Delete Seminar</h2>
+  <form method="POST" action="{{url_for('.delete', eventid=event.id)}}">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens="only") }}
+    <div class="form-group">
+      <p>Delete this seminar. This cannot be undo.</p>
+      <button type="submit" class="btn btn-danger">Delete Seminar</button>
+    </div>    
+  </form>
+</div>
+{% endblock %}
