@@ -43,8 +43,10 @@
   <div class="page-header">
     {% if single %}
     <h1>{{events[0].datetime.strftime("%a, %d %b %Y")}}</h1>
-    {% else %}
+    {% elif next_event %}
     <h1>Complete Schedule</h1>
+    {% else %}
+    <h1>Schedule</h1>
     {% endif %}
   </div>
   <ul>
