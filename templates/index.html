@@ -2,11 +2,49 @@
 {% block title %}ISG Research Seminar Schedule{% endblock %}
 {% block content %}
 <div class="container">
+
+  {% if not single and next_event %}
+  <div class="page-header">
+    <h1>Next Seminar</h1>
+  </div>
+  <a href="{{url_for('.day', date=next_event.datetime.strftime('%Y-%m-%d'))}}"><span class="seminar-datetime">{{next_event.datetime_str}}</span></a>
+  <a href="{{url_for('.day', date=next_event.datetime.strftime('%Y-%m-%d'))}}"><span class="seminar-title">{{next_event.title}}</span></a>
+  by
+  {% if next_event.speaker_link %}<a href="{{next_event.speaker_link}}">{% endif %}
+    <span class="seminar-speaker">{{next_event.speaker_firstname}} {{next_event.speaker_lastname}}</span>
+    {% if next_event.speaker_link %}</a>{% endif %}
+  {% if next_event.speaker_affiliation %}({{next_event.speaker_affiliation}}){% endif %}
+  <br />
+  {% if next_event.public_notes %}
+  <div class="seminar-markdown">
+    {% filter markdown %}
+    {{next_event.public_notes}}
+    {% endfilter %}
+  </div>
+  {% endif %}
+  <div class="seminar-markdown">
+    {% filter markdown %}
+{{next_event.abstract}}
+    {% endfilter %}
+  </div>
+  <span class="seminar-field" data-toggle="collapse" href="#collapse-{{next_event.id}}">Speaker Bio: <a href="#">⯆</a></span>
+  <div class="collapse in" id="collapse-{{next_event.id}}">
+    <div class="seminar-markdown">
+      {% filter markdown %}
+{{next_event.speaker_bio}}
+      {% endfilter %}
+    </div>
+  </div>
+  <div>
+    <span class="seminar-field">Venue:</span> <span class="seminar-venue">{{next_event.venue}}</span>
+  </div>
+  {% endif %}
+
   <div class="page-header">
     {% if single %}
     <h1>{{events[0].datetime.strftime("%a, %d %b %Y")}}</h1>
     {% else %}
-    <h1>Schedule</h1>
+    <h1>Complete Schedule</h1>
     {% endif %}
   </div>
   <ul>

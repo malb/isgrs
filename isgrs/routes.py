@@ -347,7 +347,18 @@ def index():
               .filter(Event.datetime != None)  ## we might create "temp" entries with no datetime
               .order_by(Event.datetime.desc())
               .all())
-    return render_template("index.html", events=events, free=free, single=False)
+
+    next_event = (
+        db.session.query(Event)
+        .filter(Event.datetime > datetime.datetime.now())
+        .filter(Event.status == "PUBLIC")
+        .order_by(Event.datetime.asc())
+        .first()
+    )
+    if next_event and next_event.datetime - datetime.datetime.now() > datetime.timedelta(30):
+        next_event = None
+
+    return render_template("index.html", events=events, free=free, single=False, next_event=next_event)
 
 
 @app.route("/d/<date>", methods=["GET"])
