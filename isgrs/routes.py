@@ -11,6 +11,7 @@ from flask_wtf import FlaskForm
 from icalendar import Calendar
 from icalendar import Event as ICalEvent
 from icalendar import vText
+import pytz
 from sqlalchemy import or_
 from wtforms import RadioField, SelectField, StringField, SubmitField, TextAreaField
 from wtforms.fields.html5 import DateField, EmailField, URLField
@@ -412,8 +413,9 @@ def ical():
             raise ValueError("This shouldn't happen.")
 
         icalevent.add("description", event.public_notes + "\n\n" + event.abstract + "\n\n" + event.speaker_bio)
-        icalevent.add("dtstart", event.datetime)
-        icalevent.add("dtend", event.datetime + datetime.timedelta(hours=1))
+        start = event.datetime.replace(tzinfo=pytz.timezone("Europe/London"))
+        icalevent.add("dtstart", start)
+        icalevent.add("dtend", start + datetime.timedelta(hours=1))
         icalevent.add("dtstamp", datetime.datetime.now())
         icalevent["location"] = vText(
             "{event.venue}, Royal Holloway, University of London, Egham, Surrey, UK".format(event=event)
