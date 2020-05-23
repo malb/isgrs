@@ -50,7 +50,7 @@
         {% endfilter %}
       </div>
       {% endif %}
-      <b>Venue:</b> <span class="seminar-venue">{%  if event.venue.startswith("https://") %} <a href="{{event.venue}}">{{event.venue}}</a> {% else %} {{event.venue}} {% endif %} </span>,
+      <b>Venue:</b> <span class="seminar-venue">{%  if event.venue.startswith("https://") %}<a href="{{event.venue}}">{{event.venue}}</a>{% else %}{{event.venue}}{% endif %}</span>,
       <b>Minder:</b> <a href="mailto:{{event.minder_email}}">
         {{event.minder_firstname}} {{event.minder_lastname}}</a></br>
       <b>Actions:</b>
@@ -112,7 +112,7 @@
         {% endfilter %}
       </div>
       {% endif %}
-      <b>Venue:</b> <span class="seminar-venue">{%  if event.venue.startswith("https://") %} <a href="{{event.venue}}">{{event.venue}}</a> {% else %} {{event.venue}} {% endif %} </span>,
+      <b>Venue:</b> <span class="seminar-venue">{%  if event.venue.startswith("https://") %}<a href="{{event.venue}}">{{event.venue}}</a>{% else %}{{event.venue}}{% endif %}</span>,
       <b>Minder:</b> <a href="mailto:{{event.minder_email}}">
         {{event.minder_firstname}} {{event.minder_lastname}}</a></br>
       <b>Actions:</b>
