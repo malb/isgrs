@@ -153,12 +153,12 @@ def edit(eventid):
     form = EditForm(obj=event)
 
     if form.validate_on_submit():
-        event.set_date_time(form.date.data, form.time.data)
-
-        conflict = event.conflict()
+        conflict = Event.conflict(form.date.data, form.time.data)
         if conflict is not None:
             flash("Scheduling clash with {event}".format(event=conflict), category="danger")
-            redirect("/admin")
+            return redirect("/admin/edit/{event.id}".format(event=event))
+
+        event.set_date_time(form.date.data, form.time.data)
 
         form.populate_obj(event)
 

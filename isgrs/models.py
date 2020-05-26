@@ -99,27 +99,39 @@ class Event(db.Model):
     def in_future(self):
         return self.datetime > datetime.datetime.now()
 
-    def conflict(self):
+    @staticmethod
+    def conflict(date, time=None):
         """
-        Return event (if any) in the db that conflicts with this event by having the same datetime.
+        Return event (if any) in the db that conflicts with the date/time.
+
+        If ``time`` is ``None`` then ``date`` is interpreted as ``datetime``.
 
         """
+
+        if time:
+            datetime = Event.to_datetime(date, time)
+        else:
+            datetime = date
+
         clash = (
             db.session.query(Event)
-            .filter(Event.datetime == self.datetime)
-            .filter(Event.id != self.id)
+            .filter(Event.datetime == datetime)
         )
         if clash.count() > 0:
             return clash.one()
         else:
             return None
 
-    def set_date_time(self, date, time):
+    @staticmethod
+    def to_datetime(date, time):
         if not isinstance(date, datetime.date):
             date = datetime.date.fromisoformat(date)
         if not isinstance(time, datetime.time):
             time = datetime.time.fromisoformat(time)
-        self.datetime = datetime.datetime.combine(date, time)
+        return datetime.datetime.combine(date, time)
+
+    def set_date_time(self, date, time):
+        self.datetime = Event.to_datetime(date, time)
 
 
 class RolesUsers(db.Model):
