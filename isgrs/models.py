@@ -100,7 +100,7 @@ class Event(db.Model):
         return self.datetime > datetime.datetime.now()
 
     @staticmethod
-    def conflict(date, time=None):
+    def conflict(date, time=None, id=None):
         """
         Return event (if any) in the db that conflicts with the date/time.
 
@@ -116,6 +116,7 @@ class Event(db.Model):
         clash = (
             db.session.query(Event)
             .filter(Event.datetime == datetime)
+            .filter(Event.id != id)
         )
         if clash.count() > 0:
             return clash.one()
