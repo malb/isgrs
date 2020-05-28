@@ -15,18 +15,18 @@
     {% if next_event.speaker_link %}</a>{% endif %}
   {% if next_event.speaker_affiliation %}({{next_event.speaker_affiliation}}){% endif %}
   <br />
-  {% if next_event.public_notes %}
-  <div class="seminar-markdown">
-    {% filter markdown %}
-    {{next_event.public_notes}}
-    {% endfilter %}
-  </div>
-  {% endif %}
   <div class="seminar-markdown">
     {% filter markdown %}
 {{next_event.abstract}}
     {% endfilter %}
   </div>
+  {% if next_event.public_notes %}
+  <div class="seminar-markdown">
+    {% filter markdown %}
+{{next_event.public_notes}}
+    {% endfilter %}
+  </div>
+  {% endif %}
   <span class="seminar-field" data-toggle="collapse" href="#collapse-{{next_event.id}}">Speaker Bio: <a href="#">⯆</a></span>
   <div class="collapse in" id="collapse-{{next_event.id}}">
     <div class="seminar-markdown">
@@ -61,6 +61,11 @@
       {% if event.speaker_link %}</a>{% endif %}
       {% if event.speaker_affiliation %}({{event.speaker_affiliation}}){% endif %}
       <br />
+      <div class="seminar-markdown">
+        {% filter markdown %}
+{{event.abstract}}
+        {% endfilter %}
+      </div>
       {% if event.public_notes %}
       <div class="seminar-markdown">
         {% filter markdown %}
@@ -68,11 +73,6 @@
         {% endfilter %}
       </div>
       {% endif %}
-      <div class="seminar-markdown">
-        {% filter markdown %}
-{{event.abstract}}
-        {% endfilter %}
-      </div>
       <span class="seminar-field" data-toggle="collapse" href="#collapse-{{event.id}}">Speaker Bio: <a href="#">⯆</a></span>
       <div {%if single %} class="collapse in" {% else %} class="collapse" {% endif %} id="collapse-{{event.id}}">
       <div class="seminar-markdown">
