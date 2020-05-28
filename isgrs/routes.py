@@ -351,7 +351,7 @@ def index():
 
     next_event = (
         db.session.query(Event)
-        .filter(Event.datetime > datetime.datetime.now() + datetime.timedelta(hours=1))
+        .filter(Event.datetime > datetime.datetime.now() - datetime.timedelta(hours=1))
         .filter(Event.status == "PUBLIC")
         .order_by(Event.datetime.asc())
         .first()
