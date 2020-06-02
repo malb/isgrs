@@ -36,7 +36,7 @@
     </div>
   </div>
   <div>
-    <span class="seminar-field">Venue:</span> <span class="seminar-venue">{%  if next_event.venue.startswith("https://") %} <a href="{{next_event.venue}}">Online</a> {% else %} {{next_event.venue}} {% endif %} </span>
+    <span class="seminar-field">Venue:</span> <span class="seminar-venue">{% if next_event.venue.startswith("https://") %} <a href="{{next_event.venue}}">Online</a> {% else %} {{next_event.venue}} {% endif %} </span>
   </div>
   {% endif %}
 
@@ -82,7 +82,7 @@
       </div>
       </div>
       <div>
-        <span class="seminar-field">Venue:</span> <span class="seminar-venue">{%  if event.venue.startswith("https://") %} <a href="{{event.venue}}">Online</a> {% else %} {{event.venue}} {% endif %} </span>
+        <span class="seminar-field">Venue:</span> <span class="seminar-venue">{% if event.venue.startswith("https://") %} <a href="{{event.venue}}">Online</a> {% else %} {{event.venue}} {% endif %} </span>
       </div>
     </li>
     {% elif event.status == "PLACEHOLDER" %}
