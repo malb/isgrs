@@ -7,6 +7,7 @@ from flask_bootstrap import Bootstrap
 from flask_security import Security, SQLAlchemyUserDatastore
 from flaskext.markdown import Markdown
 from flask_security.utils import encrypt_password
+from paste.translogger import TransLogger
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -46,6 +47,7 @@ def create_app():
     security.init_app(app, user_datastore)
 
     app.register_blueprint(blueprint)
+    app = TransLogger(app)
     return app
 
 
