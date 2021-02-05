@@ -11,6 +11,7 @@ SQLAlchemy
 Werkzeug
 pytest-flask-sqlalchemy
 python-dotenv
+email_validator
 click
 click-log
 bcrypt
