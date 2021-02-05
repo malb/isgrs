@@ -6,7 +6,7 @@ Flask-SQLAlchemy
 Flask-WTF
 Flask-Bootstrap
 Flask-Security
-Flask-Markdown
+git+https://github.com/dcolish/flask-markdown.git@8c93686
 SQLAlchemy
 Werkzeug
 pytest-flask-sqlalchemy

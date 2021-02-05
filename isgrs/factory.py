@@ -13,6 +13,7 @@ migrate = Migrate()
 mail = Mail()
 bootstrap = Bootstrap()
 security = Security()
+markdown = Markdown(None)
 
 
 def make_session():
@@ -40,7 +41,7 @@ def create_app():
     migrate.init_app(app, db)
     mail.init_app(app)
     bootstrap.init_app(app)
-    Markdown(app)
+    markdown.init_app(app)
 
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     security.init_app(app, user_datastore)

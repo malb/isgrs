@@ -20,7 +20,7 @@ from wtforms.validators import DataRequired
 from config import Config
 
 from .email import mkadmininfo, mkannounce, send
-from .factory import db
+from .factory import db, markdown
 from .models import Event, NoResultFound, User
 
 app = Blueprint("app", __name__)
@@ -343,6 +343,10 @@ def request_speaker_edit(eventid):
 
 @app.route("/", methods=["GET"])
 def index():
+    # there is some caching go on inside Markdown() which makes rendering halt to a crawl, replacing
+    # the object here -- while clumsy -- works around the issue.
+    import markdown as md
+    markdown._instance = md.Markdown()
     free = request.args.get("free")
     events = (db.session.query(Event)
               .filter(Event.datetime != None)  ## we might create "temp" entries with no datetime
