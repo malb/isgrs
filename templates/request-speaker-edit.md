@@ -1,6 +1,6 @@
 Hi {{event.speaker_firstname}},
 
-For you upcoming talk in in ISG Research Seminar on {{event.datetime_str}} at Royal Holloway could you provide us with
+For you upcoming talk in the {{config.TITLE}} on {{event.datetime_str}} at Royal Holloway could you provide us with
 
 - a title
 - an abstract and

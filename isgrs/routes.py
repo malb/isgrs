@@ -330,7 +330,7 @@ def request_speaker_edit(eventid):
         flash("Message sent.", category="success")
         return redirect("/admin")
     else:
-        form.subject.data = "ISG Research Seminar on {event.datetime_str}".format(event=event)
+        form.subject.data = "Seminar on {event.datetime_str}".format(event=event)
         form.cc.data = ", ".join(admins)
         form.message.data = render_template("request-speaker-edit.md", event=event, sender=current_user)
     return render_template("request-speaker-edit.html", form=form, event=event)
@@ -403,7 +403,7 @@ def ical():
     events = events.all()
 
     cal = Calendar()
-    cal.add("prodid", "-//ISG Research Seminars//{url}//".format(url=Config.FRONTEND_DOMAIN))
+    cal.add("prodid", "-//{title}//{url}//".format(name=Config.TITLE, url=Config.FRONTEND_DOMAIN))
     cal.add("version", "2.0")
     for event in events:
         icalevent = ICalEvent()
@@ -421,9 +421,8 @@ def ical():
         icalevent.add("dtstart", start)
         icalevent.add("dtend", start + datetime.timedelta(hours=1))
         icalevent.add("dtstamp", datetime.datetime.now())
-        icalevent["location"] = vText(
-            "{event.venue}, Royal Holloway, University of London, Egham, Surrey, UK".format(event=event)
-        )
+        if not Config.SUPPRESS_VENUE_URLS:
+            icalevent["location"] = vText("{event.venue}".format(event=event))
         icalevent["uid"] = event.datetime.strftime("%Y%m%d%H%M@{url}".format(url=Config.FRONTEND_DOMAIN))
         cal.add_component(icalevent)
     return Response(cal.to_ical(), mimetype="text/calendar")

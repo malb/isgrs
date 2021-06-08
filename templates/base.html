@@ -35,15 +35,14 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="{{url_for('.index')}}">ISG Research Seminars</a>
+      <a class="navbar-brand" href="{{url_for('.index')}}">{{config.TITLE}}</a>
     </div>
     <ul class="nav navbar-nav">
         <li><a href="{{url_for('.ical')}}">iCal</a></li>
-        <li><a href="mailto:isg-research-seminar-join@lists.rhul.ac.uk">Mailing List</a></li>
-        <li><a href="https://intranet.royalholloway.ac.uk/aboutus/documents/pdf/locationmap/campusplan.pdf">Campus Map</a></li>
         <li><a href="{{url_for('.index', free='shown')}}">Free Slots</a></li>
-        <li><a href="https://www.royalholloway.ac.uk/research-and-teaching/departments-and-schools/information-security/">ISG</a></li>
-        <li><a href="mailto:isg-research-seminar@rhul.ac.uk">Contact</a></li>
+        {% for link in config.LINKS %}
+        <li><a href="{{link[0]}}">{{link[1]}}</a></li>
+        {% endfor %}    
     </ul>
   </div>
 </nav>

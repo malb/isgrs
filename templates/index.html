@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}ISG Research Seminar Schedule{% endblock %}
+{% block title %}{{config.TITLE}} Schedule{% endblock %}
 {% block content %}
 <div class="container">
 
@@ -36,7 +36,17 @@
     </div>
   </div>
   <div>
-    <span class="seminar-field">Venue:</span> <span class="seminar-venue">{% if next_event.venue.startswith("https://") %} <a href="{{next_event.venue}}">Online</a> {% else %} {{next_event.venue}} {% endif %} </span>
+    <span class="seminar-field">Venue:</span> <span class="seminar-venue">
+      {% if next_event.venue.startswith("https://") or next_event.venue.startswith("http://") %}
+        {% if config.SUPPRESS_VENUE_URLS %}
+        Online
+        {% else %}
+        <a href="{{next_event.venue}}">Online</a>
+        {% endif %}
+      {% else %}
+        {{next_event.venue}}
+      {% endif %}
+    </span>
   </div>
   {% endif %}
 
@@ -82,7 +92,17 @@
       </div>
       </div>
       <div>
-        <span class="seminar-field">Venue:</span> <span class="seminar-venue">{% if event.venue.startswith("https://") %} <a href="{{event.venue}}">Online</a> {% else %} {{event.venue}} {% endif %} </span>
+        <span class="seminar-field">Venue:</span> <span class="seminar-venue">
+          {% if event.venue.startswith("https://") or event.venue.startswith("http://") %}
+          {% if config.SUPPRESS_VENUE_URLS %}
+          Online
+          {% else %}
+          <a href="{{event.venue}}">Online</a>
+          {% endif %}
+          {% else %}
+          {{event.venue}}
+          {% endif %}
+        </span>
       </div>
     </li>
     {% elif event.status == "PLACEHOLDER" %}
