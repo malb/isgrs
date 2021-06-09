@@ -403,7 +403,7 @@ def ical():
     events = events.all()
 
     cal = Calendar()
-    cal.add("prodid", "-//{title}//{url}//".format(name=Config.TITLE, url=Config.FRONTEND_DOMAIN))
+    cal.add("prodid", "-//{title}//{url}//".format(title=Config.TITLE, url=Config.FRONTEND_DOMAIN))
     cal.add("version", "2.0")
     for event in events:
         icalevent = ICalEvent()
