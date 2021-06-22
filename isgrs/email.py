@@ -43,7 +43,7 @@ def mkadmininfo(event):
         cc = []
 
     return mkmsg(
-        "[isgrs] update to {event.datetime_str}".format(event=event),
+        "[{title}] update to {event.datetime_str}".format(event=event, title=Config.TITLE),
         to=admins,
         cc=cc,
         frm=admins[0],
