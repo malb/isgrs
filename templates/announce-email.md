@@ -1,4 +1,4 @@
-When:   {{event.datetime.strftime("%a, %d %b %Y %H:%M")}}
+When:   {{event.datetime.strftime("%a, %d %b %Y %H:%M")}} (UK time)
 Where:  {{event.venue}}
 Who:    {{event.speaker}} {% if event.speaker_affiliation %}({{event.speaker_affiliation}}){% endif %}
 
@@ -16,3 +16,7 @@ Who:    {{event.speaker}} {% if event.speaker_affiliation %}({{event.speaker_aff
 
 Cheers,
 {{signers}}
+
+{{config.FRONTEND_DOMAIN}}
+
+
