@@ -1,6 +1,6 @@
 Hi {{event.speaker_firstname}},
 
-For you upcoming talk in the {{config.TITLE}} on {{event.datetime_str}} at Royal Holloway could you provide us with
+For your upcoming talk in the {{config.TITLE}} on {{event.datetime_str}} at Royal Holloway could you provide us with
 
 - a title
 - an abstract and
@@ -12,3 +12,6 @@ by filling in the form at
   
 Cheers,
 {{sender.firstname}}
+
+---
+https://seminars.isg.rhul.ac.uk/
