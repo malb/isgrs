@@ -14,7 +14,7 @@ from icalendar import vText
 import pytz
 from sqlalchemy import or_
 from wtforms import RadioField, SelectField, StringField, SubmitField, TextAreaField
-from wtforms.fields.html5 import DateField, EmailField, URLField
+from wtforms.fields import DateField, EmailField, URLField
 from wtforms.validators import DataRequired
 
 from config import Config

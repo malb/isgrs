@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_security import Security, SQLAlchemyUserDatastore
-from flaskext.markdown import Markdown
+from upstream.markdown import Markdown
 from flask_security.utils import encrypt_password
 
 db = SQLAlchemy()

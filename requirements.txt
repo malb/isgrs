@@ -6,7 +6,6 @@ Flask-SQLAlchemy
 Flask-WTF
 Flask-Bootstrap
 Flask-Security
-git+https://github.com/dcolish/flask-markdown.git@8c93686
 SQLAlchemy
 Werkzeug
 pytest-flask-sqlalchemy
@@ -17,3 +16,4 @@ click-log
 bcrypt
 icalendar
 paste
+markdown
