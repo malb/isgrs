@@ -209,7 +209,7 @@ def admin_documentation():
         return render_template("markdown.html", title="Documentation", markdown=markdown)
 
 
-def _announce(eventid, sender):
+def _announce(eventid):
     if eventid == "next":
         event = (
             db.session.query(Event)
@@ -232,7 +232,7 @@ def _announce(eventid, sender):
             msg = "Seminar <{eventid}> not found.".format(eventid=eventid)
             raise UserVisibleError(msg)
 
-    send(mkannounce(event, sender))
+    send(mkannounce(event))
     return event
 
 
@@ -244,7 +244,7 @@ def announce(token, eventid):
         return redirect("/admin")
 
     try:
-        event = _announce(eventid, sender=current_user)
+        event = _announce(eventid)
     except UserVisibleError as e:
         flash(str(e), category="danger")
         return redirect("/admin")
@@ -262,7 +262,7 @@ def json_announce(token, eventid):
         return jsonify(success=False, message="Wrong token.")
 
     try:
-        _announce(eventid, sender=user)
+        _announce(eventid)
     except UserVisibleError as e:
         return jsonify(success=False, message=str(e))
 
@@ -324,7 +324,7 @@ def request_speaker_edit(eventid):
     form = SolicitSpeakerEditForm()
     if form.validate_on_submit():
         to = "{event.speaker_firstname} {event.speaker_lastname} <{event.speaker_email}>".format(event=event)
-        msg = Message(form.subject.data, recipients=[to], cc=admins, sender=current_user.email)
+        msg = Message(form.subject.data, recipients=[to], cc=admins)
         msg.body = form.message.data
         send(msg)
         flash("Message sent.", category="success")
@@ -332,7 +332,7 @@ def request_speaker_edit(eventid):
     else:
         form.subject.data = "Seminar on {event.datetime_str}".format(event=event)
         form.cc.data = ", ".join(admins)
-        form.message.data = render_template("request-speaker-edit.md", event=event, sender=current_user)
+        form.message.data = render_template("request-speaker-edit.md", event=event)
     return render_template("request-speaker-edit.html", form=form, event=event)
 
 
