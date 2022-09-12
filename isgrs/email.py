@@ -6,8 +6,8 @@ from .factory import mail, db
 from .models import User
 
 
-def mkmsg(subject, to, cc, frm, template, **kwds):
-    msg = Message(subject, sender=frm, recipients=to, cc=cc)
+def mkmsg(subject, to, cc, template, **kwds):
+    msg = Message(subject, recipients=to, cc=cc)
     msg.body = render_template(template, **kwds)
     return msg
 
@@ -26,7 +26,6 @@ def mkannounce(event, sender, signers=None):
         "{event.datetime_str} in {event.venue}: {event.speaker}".format(event=event),
         to=to,
         cc=Config.ANNOUNCE_INTERNAL,
-        frm=sender.email,
         template="announce-email.md",
         event=event,
         signers=signers,
@@ -46,7 +45,6 @@ def mkadmininfo(event):
         "[{title}] update to {event.datetime_str}".format(event=event, title=Config.TITLE),
         to=admins,
         cc=cc,
-        frm=admins[0],
         template="admin-info.md",
         event=event,
     )
