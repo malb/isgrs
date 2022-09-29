@@ -209,7 +209,7 @@ def admin_documentation():
         return render_template("markdown.html", title="Documentation", markdown=markdown)
 
 
-def _announce(eventid):
+def _announce(eventid, sender):
     if eventid == "next":
         event = (
             db.session.query(Event)
@@ -232,7 +232,7 @@ def _announce(eventid):
             msg = "Seminar <{eventid}> not found.".format(eventid=eventid)
             raise UserVisibleError(msg)
 
-    send(mkannounce(event))
+    send(mkannounce(event, sender))
     return event
 
 
@@ -244,7 +244,7 @@ def announce(token, eventid):
         return redirect("/admin")
 
     try:
-        event = _announce(eventid)
+        event = _announce(eventid, sender=current_user)
     except UserVisibleError as e:
         flash(str(e), category="danger")
         return redirect("/admin")
@@ -262,7 +262,7 @@ def json_announce(token, eventid):
         return jsonify(success=False, message="Wrong token.")
 
     try:
-        _announce(eventid)
+        _announce(eventid, sender=user)
     except UserVisibleError as e:
         return jsonify(success=False, message=str(e))
 
@@ -332,7 +332,7 @@ def request_speaker_edit(eventid):
     else:
         form.subject.data = "Seminar on {event.datetime_str}".format(event=event)
         form.cc.data = ", ".join(admins)
-        form.message.data = render_template("request-speaker-edit.md", event=event)
+        form.message.data = render_template("request-speaker-edit.md", event=event, sender=current_user)
     return render_template("request-speaker-edit.html", form=form, event=event)
 
 
