@@ -22,10 +22,15 @@ def mkannounce(event, sender, signers=None):
     else:
         to = []
 
+    cc = Config.ANNOUNCE_INTERNAL
+
+    if (not to) and (cc):
+        to, cc = cc, to
+
     return mkmsg(
         "{event.datetime_str} in {event.venue}: {event.speaker}".format(event=event),
         to=to,
-        cc=Config.ANNOUNCE_INTERNAL,
+        cc=cc,
         template="announce-email.md",
         event=event,
         signers=signers,
