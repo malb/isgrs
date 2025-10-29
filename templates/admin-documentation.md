@@ -54,7 +54,7 @@ They both directly send out the announcement without waiting for user feedback. 
 2. Run ``pip install -r requirements.txt``
 3. Edit ``config.py`` with local settings
 4. Run ``flask db init``
-5. Run ``flask db migrate`` # Joël: This creates the migration on the fly, maybe the migration should be versioned?
+5. Run ``flask db migrate``
 6. Run ``flask db upgrade``
 7. Run ``flask run``
 
