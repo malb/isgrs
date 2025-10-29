@@ -52,7 +52,9 @@ They both directly send out the announcement without waiting for user feedback. 
 
 1. Create and activate a Python virtual environment
 2. Run ``pip install -r requirements.txt``
-3. Run ``flask db upgrade``
-4. Edit ``config.py`` with local settings
-5. Run ``flask run``
+3. Edit ``config.py`` with local settings
+4. Run ``flask db init``
+5. Run ``flask db migrate`` # Joël: This creates the migration on the fly, maybe the migration should be versioned?
+6. Run ``flask db upgrade``
+7. Run ``flask run``
 
