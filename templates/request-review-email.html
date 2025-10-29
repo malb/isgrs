@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% block title %}Seminar Details{% endblock %}
+{% block title %}Review email{% endblock %}
 {% block navbar %}
 <div class="navbar navbar-fixed-top">
   <!-- ... -->
@@ -9,15 +9,15 @@
 {% block content %}
 <div class="container">
   <div class="page-header">
-    <h1>Request Speaker Input</h1>
+    <h1>Review the email you are about to send</h1>
   </div>
   <form method="POST" action="{{url_for('.request_speaker_edit', eventid=event.id)}}">
     {{ form.hidden_tag() }}
     {{ wtf.form_errors(form, hiddens="only") }}
-    <div class="form-group row">     
-      <label class="col-md-1 col-form-label">To:</label>
+    <div class="form-group row">
+      {{form.to.label(class="col-md-1 col-form-label")}}
       <div class="col-md-8">
-        <input class="form-control" type="text" value="{{event.speaker_firstname}} {{event.speaker_lastname}} &lt;{{event.speaker_email}}&gt;" readonly>
+        {{form.to(class="form-control", readonly=True)}}        
       </div>
     </div>
     <div class="form-group row">
