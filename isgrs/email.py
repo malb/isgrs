@@ -28,7 +28,7 @@ def mkannounce(event, sender, signers=None):
         to, cc = cc, to
 
     venue = event.venue
-    if venue.startswith("https://") or venue.startswith("https://"):
+    if venue.startswith("https://") or venue.startswith("http://"):
         venue = "(online)"
     else:
         venue = "in " + venue
