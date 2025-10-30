@@ -2,26 +2,28 @@ import os
 import logging  # noqa
 
 import sys
+
 if sys.version_info < (3, 7):
     from backports.datetime_fromisoformat import MonkeyPatch
+
     MonkeyPatch.patch_fromisoformat()
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
-    TITLE = # FIXME
-    SUPPRESS_VENUE_URLS = False # FIXME
-    LINKS = # FIXME
+    TITLE = "foo"  # FIXME
+    SUPPRESS_VENUE_URLS = False  # FIXME
+    LINKS = ()  # FIXME
 
     # URL of the webapp
-    FRONTEND_DOMAIN =  # FIXME
+    FRONTEND_DOMAIN = "http://foo.bar"  # FIXME
 
     # used the generate tokens
     SECRET_KEY = os.environ.get("SECRET_KEY")  # FIXME
 
     # used for generating passwords
-    SECURITY_PASSWORD_SALT =  # FIXME
+    SECURITY_PASSWORD_SALT = ""  # FIXME
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL"
     ) or "sqlite:///" + os.path.join(basedir, "isgrs.db")
@@ -33,7 +35,7 @@ class Config(object):
     TESTING = False
 
     # We'll run in debug mode on the developer's machine
-    if basedir == :  # FIXME
+    if basedir == "":  # FIXME
         FRONTEND_DOMAIN = "http://localhost:5000"
         TESTING = True
 
@@ -43,13 +45,20 @@ class Config(object):
             return fh.read()
 
     # Mailinglists to announce public events
-    ANNOUNCE_PUBLIC = [
-
-    ]
+    ANNOUNCE_PUBLIC = ["public@foo.com"]
 
     # Mailinglists to announce internal events
-    ANNOUNCE_INTERNAL = [
-    ]
+    ANNOUNCE_INTERNAL = ["private@foo.com"]
+
+    MAIL_SERVER = "foo.com"  # FIXME
+    MAIL_PORT = 587  # FIXME
+    MAIL_USERNAME = "FOO"  # FIXME
+    MAIL_PASSWORD = "BAR"  # FIXME
+    MAIL_USE_TLS = True  # FIXME
+    MAIL_USE_SSL = False  # FIXME
+    MAIL_DEFAULT_SENDER = "sender@foo.com"  # FIXME
+
+    SUPPRESS_VENUE_URLS = False  # FIXME
 
 
 class TestConfig(Config):

@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
-"""
-
-"""
+""" """
 import datetime
 
-from flask import Blueprint, Response, flash, jsonify, redirect, render_template, request
+from flask import (
+    Blueprint,
+    Response,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+)
 from flask_mail import Message
 from flask_security import current_user, login_required
 from flask_wtf import FlaskForm
@@ -19,7 +25,7 @@ from wtforms.validators import DataRequired
 
 from config import Config
 
-from .email import mkadmininfo, mkannounce, send
+from .email import mkadmininfo, mkannounce, mkmsg, send
 from .factory import db, markdown
 from .models import Event, NoResultFound, User
 
@@ -44,7 +50,12 @@ def admin():
 @app.route("/admin/bulk-add", methods=("GET", "POST"))
 @login_required
 def bulk_add():
-    minders = db.session.query(User.email, User.name).filter(User.active).order_by(User.firstname).all()
+    minders = (
+        db.session.query(User.email, User.name)
+        .filter(User.active)
+        .order_by(User.firstname)
+        .all()
+    )
     minders = minders + [("", "")]
     default_minder = db.session.query(User).filter(User.lead).first()
 
@@ -53,7 +64,13 @@ def bulk_add():
         enddate = DateField("End Date (Inclusive)", validators=[DataRequired()])
         dow = RadioField(
             "Day of Week",
-            choices=(("0", "Monday"), ("1", "Tuesday"), ("2", "Wednesday"), ("3", "Thursday"), ("4", "Friday")),
+            choices=(
+                ("0", "Monday"),
+                ("1", "Tuesday"),
+                ("2", "Wednesday"),
+                ("3", "Thursday"),
+                ("4", "Friday"),
+            ),
             validators=[DataRequired()],
             default="3",
         )
@@ -75,7 +92,9 @@ def bulk_add():
         for date in dates:
             time = datetime.time.fromisoformat(form.time.data)
             try:
-                minder = db.session.query(User).filter(User.email == form.minder.data).one()
+                minder = (
+                    db.session.query(User).filter(User.email == form.minder.data).one()
+                )
             except NoResultFound:
                 minder = None
 
@@ -136,7 +155,12 @@ def edit(eventid):
         venue = StringField("Venue")
         status = SelectField(
             "Status",
-            choices=(("PUBLIC", "PUBLIC"), ("PRIVATE", "PRIVATE"), ("PLACEHOLDER", "PLACEHOLDER"), ("FREE", "FREE")),
+            choices=(
+                ("PUBLIC", "PUBLIC"),
+                ("PRIVATE", "PRIVATE"),
+                ("PLACEHOLDER", "PLACEHOLDER"),
+                ("FREE", "FREE"),
+            ),
         )
         public_notes = TextAreaField("Public Notes")
         private_notes = TextAreaField("Internal Notes")
@@ -155,7 +179,10 @@ def edit(eventid):
     if form.validate_on_submit():
         conflict = Event.conflict(form.date.data, form.time.data, event.id)
         if conflict is not None:
-            flash("Scheduling clash with {event}".format(event=conflict), category="danger")
+            flash(
+                "Scheduling clash with {event}".format(event=conflict),
+                category="danger",
+            )
             return redirect("/admin/edit/{event.id}".format(event=event))
 
         event.set_date_time(form.date.data, form.time.data)
@@ -163,10 +190,15 @@ def edit(eventid):
         form.populate_obj(event)
 
         if (
-            event.title or event.speaker_email or event.speaker_firstname or event.speaker_lastname
+            event.title
+            or event.speaker_email
+            or event.speaker_firstname
+            or event.speaker_lastname
         ) and event.status == "FREE":
             flash(
-                "Setting status of {event} to PLACEHOLDER since details were filled in.".format(event=event),
+                "Setting status of {event} to PLACEHOLDER since details were filled in.".format(
+                    event=event
+                ),
                 category="warning",
             )
             event.status = "PLACEHOLDER"
@@ -206,7 +238,32 @@ def admin_documentation():
     if raw:
         return Response(markdown, mimetype="text/plain")
     else:
-        return render_template("markdown.html", title="Documentation", markdown=markdown)
+        return render_template(
+            "markdown.html", title="Documentation", markdown=markdown
+        )
+
+
+def review_mail_view(mail, event):
+    class SolicitReviewMailForm(FlaskForm):
+        subject = StringField("Subject:", validators=[DataRequired()])
+        message = TextAreaField("Mail", validators=[DataRequired()])
+        cc = StringField("Cc:")
+        to = StringField("To:")
+        submit = SubmitField("Send")
+
+    form = SolicitReviewMailForm()
+    if form.validate_on_submit():
+        mail.subject = form.subject.data
+        mail.body = form.message.data
+        send(mail)
+        flash("Message sent.", category="success")
+        return redirect("/admin")
+    else:
+        form.cc.data = ", ".join(mail.cc)
+        form.to.data = ", ".join(mail.recipients)
+        form.subject.data = mail.subject
+        form.message.data = mail.body
+        return render_template("request-review-email.html", form=form, event=event)
 
 
 def _announce(eventid, sender):
@@ -222,7 +279,9 @@ def _announce(eventid, sender):
             raise UserVisibleError("There is no upcoming seminar.")
 
         if event.datetime - datetime.datetime.now() > datetime.timedelta(30):
-            raise UserVisibleError("Upcoming seminar is more than 30 days in the future.")
+            raise UserVisibleError(
+                "Upcoming seminar is more than 30 days in the future."
+            )
 
     else:
         eventid = int(eventid)
@@ -232,8 +291,8 @@ def _announce(eventid, sender):
             msg = "Seminar <{eventid}> not found.".format(eventid=eventid)
             raise UserVisibleError(msg)
 
-    send(mkannounce(event, sender))
-    return event
+    announce_mail = mkannounce(event, sender)
+    return (announce_mail, event)
 
 
 @app.route("/admin/announce/<token>/<eventid>", methods=("GET",))
@@ -244,7 +303,8 @@ def announce(token, eventid):
         return redirect("/admin")
 
     try:
-        event = _announce(eventid, sender=current_user)
+        announce_mail, event = _announce(eventid, sender=current_user)
+        return review_mail_view(announce_mail, event)
     except UserVisibleError as e:
         flash(str(e), category="danger")
         return redirect("/admin")
@@ -309,31 +369,28 @@ def request_speaker_edit(eventid):
     try:
         event = Event.by_id(eventid)
     except NoResultFound:
-        flash("Event <{eventid}> not found.".format(eventid=eventid), category="warning")
+        flash(
+            "Event <{eventid}> not found.".format(eventid=eventid), category="warning"
+        )
         return redirect("/admin")
 
     admins = db.session.query(User.email).filter(User.active).all()
     admins = [admin[0] for admin in admins]
-
-    class SolicitSpeakerEditForm(FlaskForm):
-        subject = StringField("Subject:", validators=[DataRequired()])
-        message = TextAreaField("Mail", validators=[DataRequired()])
-        cc = StringField("Cc:")
-        submit = SubmitField("Send")
-
-    form = SolicitSpeakerEditForm()
-    if form.validate_on_submit():
-        to = "{event.speaker_firstname} {event.speaker_lastname} <{event.speaker_email}>".format(event=event)
-        msg = Message(form.subject.data, recipients=[to], cc=admins)
-        msg.body = form.message.data
-        send(msg)
-        flash("Message sent.", category="success")
-        return redirect("/admin")
-    else:
-        form.subject.data = "Seminar on {event.datetime_str}".format(event=event)
-        form.cc.data = ", ".join(admins)
-        form.message.data = render_template("request-speaker-edit.md", event=event, sender=current_user)
-    return render_template("request-speaker-edit.html", form=form, event=event)
+    to = [
+        "{event.speaker_firstname} {event.speaker_lastname} <{event.speaker_email}>".format(
+            event=event
+        )
+    ]
+    cc = admins
+    base_mail = mkmsg(
+        subject="Seminar on {event.datetime_str}".format(event=event),
+        to=to,
+        cc=cc,
+        template="request-speaker-edit.md",
+        event=event,
+        sender=current_user,
+    )
+    return review_mail_view(base_mail, event)
 
 
 #
@@ -346,12 +403,17 @@ def index():
     # there is some caching go on inside Markdown() which makes rendering halt to a crawl, replacing
     # the object here -- while clumsy -- works around the issue.
     import markdown as md
+
     markdown._instance = md.Markdown()
     free = request.args.get("free")
-    events = (db.session.query(Event)
-              .filter(Event.datetime != None)  ## we might create "temp" entries with no datetime
-              .order_by(Event.datetime.desc())
-              .all())
+    events = (
+        db.session.query(Event)
+        .filter(
+            Event.datetime != None
+        )  ## we might create "temp" entries with no datetime
+        .order_by(Event.datetime.desc())
+        .all()
+    )
 
     next_event = (
         db.session.query(Event)
@@ -360,10 +422,15 @@ def index():
         .order_by(Event.datetime.asc())
         .first()
     )
-    if next_event and next_event.datetime - datetime.datetime.now() > datetime.timedelta(30):
+    if (
+        next_event
+        and next_event.datetime - datetime.datetime.now() > datetime.timedelta(30)
+    ):
         next_event = None
 
-    return render_template("index.html", events=events, free=free, single=False, next_event=next_event)
+    return render_template(
+        "index.html", events=events, free=free, single=False, next_event=next_event
+    )
 
 
 @app.route("/d/<date>", methods=["GET"])
@@ -392,23 +459,40 @@ def ical():
     """
 
     free = request.args.get("free")
-    events = (db.session.query(Event)
-              .filter(Event.datetime != None)  ## we might create "temp" entries with no datetime
-              .order_by(Event.datetime.desc()))
+    events = (
+        db.session.query(Event)
+        .filter(
+            Event.datetime != None
+        )  ## we might create "temp" entries with no datetime
+        .order_by(Event.datetime.desc())
+    )
 
     if free != "shown":
-        events = events.filter(or_(Event.status == "PUBLIC", Event.status == "PLACEHOLDER"))
+        events = events.filter(
+            or_(Event.status == "PUBLIC", Event.status == "PLACEHOLDER")
+        )
     else:
-        events = events.filter(or_(Event.status == "PUBLIC", Event.status == "PLACEHOLDER", Event.status == "FREE"))
+        events = events.filter(
+            or_(
+                Event.status == "PUBLIC",
+                Event.status == "PLACEHOLDER",
+                Event.status == "FREE",
+            )
+        )
     events = events.all()
 
     cal = Calendar()
-    cal.add("prodid", "-//{title}//{url}//".format(title=Config.TITLE, url=Config.FRONTEND_DOMAIN))
+    cal.add(
+        "prodid",
+        "-//{title}//{url}//".format(title=Config.TITLE, url=Config.FRONTEND_DOMAIN),
+    )
     cal.add("version", "2.0")
     for event in events:
         icalevent = ICalEvent()
         if event.status == "PUBLIC":
-            icalevent.add("summary", "{event.title} by {event.speaker}".format(event=event))
+            icalevent.add(
+                "summary", "{event.title} by {event.speaker}".format(event=event)
+            )
         elif event.status == "PLACEHOLDER":
             icalevent.add("summary", "TBC")
         elif event.status == "FREE":
@@ -416,14 +500,19 @@ def ical():
         else:
             raise ValueError("This shouldn't happen.")
 
-        icalevent.add("description", event.public_notes + "\n\n" + event.abstract + "\n\n" + event.speaker_bio)
+        icalevent.add(
+            "description",
+            event.public_notes + "\n\n" + event.abstract + "\n\n" + event.speaker_bio,
+        )
         start = event.datetime.replace(tzinfo=pytz.timezone("Europe/London"))
         icalevent.add("dtstart", start)
         icalevent.add("dtend", start + datetime.timedelta(hours=1))
         icalevent.add("dtstamp", datetime.datetime.now())
         if not Config.SUPPRESS_VENUE_URLS:
             icalevent["location"] = vText("{event.venue}".format(event=event))
-        icalevent["uid"] = event.datetime.strftime("%Y%m%d%H%M@{url}".format(url=Config.FRONTEND_DOMAIN))
+        icalevent["uid"] = event.datetime.strftime(
+            "%Y%m%d%H%M@{url}".format(url=Config.FRONTEND_DOMAIN)
+        )
         cal.add_component(icalevent)
     return Response(cal.to_ical(), mimetype="text/calendar")
 
@@ -436,4 +525,6 @@ def information_for_speakers():
     if raw:
         return Response(markdown, mimetype="text/plain")
     else:
-        return render_template("markdown.html", title="Information for Speakers", markdown=markdown)
+        return render_template(
+            "markdown.html", title="Information for Speakers", markdown=markdown
+        )

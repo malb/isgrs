@@ -27,8 +27,15 @@ def mkannounce(event, sender, signers=None):
     if (not to) and (cc):
         to, cc = cc, to
 
+    venue = event.venue
+    if venue.startswith("https://") or venue.startswith("http://"):
+        venue = "(online)"
+    else:
+        venue = "in " + venue
     return mkmsg(
-        "{event.datetime_str} in {event.venue}: {event.speaker}".format(event=event),
+        "{event.datetime_str} {venue}: {event.speaker}".format(
+            event=event, venue=venue
+        ),
         to=to,
         cc=cc,
         template="announce-email.md",
@@ -47,7 +54,9 @@ def mkadmininfo(event):
         cc = []
 
     return mkmsg(
-        "[{title}] update to {event.datetime_str}".format(event=event, title=Config.TITLE),
+        "[{title}] update to {event.datetime_str}".format(
+            event=event, title=Config.TITLE
+        ),
         to=admins,
         cc=cc,
         template="admin-info.md",
