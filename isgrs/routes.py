@@ -10,6 +10,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    url_for,
 )
 from flask_mail import Message
 from flask_security import current_user, login_required
@@ -243,7 +244,7 @@ def admin_documentation():
         )
 
 
-def review_mail_view(mail, event):
+def review_mail_view(mail, event, redirect_url):
     class SolicitReviewMailForm(FlaskForm):
         subject = StringField("Subject:", validators=[DataRequired()])
         message = TextAreaField("Mail", validators=[DataRequired()])
@@ -255,6 +256,7 @@ def review_mail_view(mail, event):
     if form.validate_on_submit():
         mail.subject = form.subject.data
         mail.body = form.message.data
+        print(mail.recipients)
         send(mail)
         flash("Message sent.", category="success")
         return redirect("/admin")
@@ -263,7 +265,12 @@ def review_mail_view(mail, event):
         form.to.data = ", ".join(mail.recipients)
         form.subject.data = mail.subject
         form.message.data = mail.body
-        return render_template("request-review-email.html", form=form, event=event)
+        return render_template(
+            "request-review-email.html",
+            form=form,
+            event=event,
+            redirect_url=redirect_url,
+        )
 
 
 def _announce(eventid, sender):
@@ -295,7 +302,7 @@ def _announce(eventid, sender):
     return (announce_mail, event)
 
 
-@app.route("/admin/announce/<token>/<eventid>", methods=("GET",))
+@app.route("/admin/announce/<token>/<eventid>", methods=("GET", "POST"))
 @login_required
 def announce(token, eventid):
     if token != current_user.announce_token:
@@ -304,7 +311,11 @@ def announce(token, eventid):
 
     try:
         announce_mail, event = _announce(eventid, sender=current_user)
-        return review_mail_view(announce_mail, event)
+        return review_mail_view(
+            announce_mail,
+            event,
+            redirect_url=url_for(".announce", token=token, eventid=eventid),
+        )
     except UserVisibleError as e:
         flash(str(e), category="danger")
         return redirect("/admin")
@@ -322,7 +333,8 @@ def json_announce(token, eventid):
         return jsonify(success=False, message="Wrong token.")
 
     try:
-        _announce(eventid, sender=user)
+        (announce_mail, _) = _announce(eventid, sender=user)
+        send(announce_mail)
     except UserVisibleError as e:
         return jsonify(success=False, message=str(e))
 
@@ -390,7 +402,9 @@ def request_speaker_edit(eventid):
         event=event,
         sender=current_user,
     )
-    return review_mail_view(base_mail, event)
+    return review_mail_view(
+        base_mail, event, redirect_url=url_for(".request_speaker_edit", eventid=eventid)
+    )
 
 
 #

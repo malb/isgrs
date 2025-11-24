@@ -11,7 +11,7 @@
   <div class="page-header">
     <h1>Review the email you are about to send</h1>
   </div>
-  <form method="POST" action="{{url_for('.request_speaker_edit', eventid=event.id)}}">
+  <form method="POST" action="{{redirect_url}}">
     {{ form.hidden_tag() }}
     {{ wtf.form_errors(form, hiddens="only") }}
     <div class="form-group row">
