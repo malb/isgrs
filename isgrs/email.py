@@ -27,6 +27,9 @@ def mkannounce(event, sender, signers=None):
     if (not to) and (cc):
         to, cc = cc, to
 
+    if event.speaker_email and event.speaker_email not in to:
+        cc = cc + [event.speaker_email]
+
     venue = event.venue
     if venue.startswith("https://") or venue.startswith("http://"):
         venue = "(online)"
