@@ -63,6 +63,16 @@ def bulk_add():
     class BulkAddForm(FlaskForm):
         startdate = DateField("Start Date", validators=[DataRequired()])
         enddate = DateField("End Date (Inclusive)", validators=[DataRequired()])
+        cadence = RadioField(
+            "Cadence",
+            choices=(
+                ("7", "Weekly"),
+                ("14", "Fortnightly"),
+            ),
+            coerce=int,
+            validators=[DataRequired()],
+            default=14,
+        )
         dow = RadioField(
             "Day of Week",
             choices=(
@@ -88,7 +98,7 @@ def bulk_add():
             i += datetime.timedelta(1)
         while i <= form.enddate.data:
             dates.append(i)
-            i += datetime.timedelta(7)
+            i += datetime.timedelta(days=form.cadence.data)
 
         for date in dates:
             time = datetime.time.fromisoformat(form.time.data)
